@@ -109,6 +109,10 @@ def create_argparser():
     credentials_group.add_argument(
         "-u", "--user", help="Authenticate as the given user", default=None
     )
+    credentials_group.add_argument(
+        "-k", "--keychain", help="Store password in keychain",
+        default=False, action="store_true"
+    )
     return parser
 
 
