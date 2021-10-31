@@ -24,8 +24,6 @@ logger = structlog.get_logger()
 
 
 def run(args):
-    configure_logger(logging.getLogger(), args.log_level)
-
     cfg = config.load()
 
     try:
@@ -79,27 +77,6 @@ def run(args):
         return 0
     finally:
         handle_disconnect(cfg.on_disconnect)
-
-
-def configure_logger(logger, level):
-    structlog.configure(
-        processors=[
-            structlog.stdlib.add_log_level,
-            structlog.stdlib.add_logger_name,
-            structlog.processors.format_exc_info,
-            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-        ],
-        logger_factory=structlog.stdlib.LoggerFactory(),
-    )
-
-    formatter = structlog.stdlib.ProcessorFormatter(
-        processor=structlog.dev.ConsoleRenderer()
-    )
-
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(level)
 
 
 async def _run(args, cfg):

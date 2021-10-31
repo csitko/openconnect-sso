@@ -66,6 +66,7 @@ class Process(multiprocessing.Process):
             raise EOFError()
 
     def run(self):
+        self.configure_logger_for_multiprocessing()
         # To work around funky GC conflicts with C++ code by ensuring QApplication terminates last
         global app
 
@@ -118,6 +119,12 @@ class Process(multiprocessing.Process):
         while self.is_alive():
             await asyncio.sleep(0.01)
         self.join()
+
+    @staticmethod
+    def configure_logger_for_multiprocessing():
+        if multiprocessing.get_start_method() == "spawn":
+            from openconnect_sso.cli import parse_args_and_initialize_script
+            parse_args_and_initialize_script()
 
 
 def on_sigterm(signum, frame):
