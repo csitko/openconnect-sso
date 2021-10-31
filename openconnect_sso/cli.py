@@ -118,7 +118,7 @@ def create_argparser():
         help="",
         type=LogLevel.parse,
         choices=LogLevel.choices(),
-        default=LogLevel.INFO,
+        default=LogLevel.ERROR,
     )
 
     parser.add_argument(
