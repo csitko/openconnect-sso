@@ -12,9 +12,8 @@ import structlog
 from PyQt6.QtCore import QUrl, QTimer
 from PyQt6.QtNetwork import QNetworkCookie, QNetworkProxy
 from PyQt6.QtWebEngineWidgets import QWebEngineView
-from PyQt6.QtWebEngineCore import QWebEngineScript, QWebEngineProfile
+from PyQt6.QtWebEngineCore import QWebEngineScript, QWebEnginePage, QWebEngineProfile
 from PyQt6.QtWidgets import QApplication
-
 from openconnect_sso import config
 
 
@@ -100,7 +99,12 @@ class Process(multiprocessing.Process):
             pass
 
         force_python_execution.timeout.connect(ignore)
+
         web = WebBrowser(cfg.auto_fill_rules, self._states.put)
+        profile = QWebEngineProfile("openconnect-sso")
+        page = QWebEnginePage(profile, web)
+        web.setPage(page)
+        web.initPageSettings()
 
         startup_info = self._commands.get()
         logger.info("Browser started", startup_info=startup_info)
@@ -147,8 +151,11 @@ def on_sigterm(signum, frame):
 class WebBrowser(QWebEngineView):
     def __init__(self, auto_fill_rules, on_update):
         super().__init__()
+
         self._on_update = on_update
         self._auto_fill_rules = auto_fill_rules
+
+    def initPageSettings(self):
         cookie_store = self.page().profile().cookieStore()
         cookie_store.cookieAdded.connect(self._on_cookie_added)
         self.page().loadFinished.connect(self._on_load_finished)
