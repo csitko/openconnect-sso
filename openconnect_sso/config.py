@@ -86,8 +86,8 @@ def get_default_auto_fill_rules():
     return {
         "https://*": [
             AutoFillRule(selector="div[id=passwordError]", action="stop").as_dict(),
+            AutoFillRule(selector="input[type=password][class~='input']", action="stop").as_dict(),
             AutoFillRule(selector="input[type=email]", fill="username").as_dict(),
-            AutoFillRule(selector="input[type=password]", fill="password").as_dict(),
             AutoFillRule(selector="input[type=submit]", action="click").as_dict(),
         ]
     }
